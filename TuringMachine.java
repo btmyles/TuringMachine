@@ -9,7 +9,8 @@ public class TuringMachine
 
     public static void main(String[] args)
     {
-        String input;
+        char[] input;
+        int head = 0;
         char cState;
         ArrayList<Transition> delta = new ArrayList<Transition>(); 
         char s1, v1, s2, v2, dir;
@@ -25,7 +26,7 @@ public class TuringMachine
         }
 
         // Read the values from the text file
-        input = in.nextLine();
+        input = in.nextLine().toCharArray();
         cState = in.nextLine().charAt(0);
 
         while (in.hasNextLine())
