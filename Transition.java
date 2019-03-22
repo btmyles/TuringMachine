@@ -29,6 +29,12 @@ public class Transition
         return cValue;
     }
 
+    // Returns an array of the operations to be completed.
+    public char[] execute()
+    {
+        return new char[] {nState, nValue, dir};
+    }
+
     public String toString()
     {
         return String.format("%c %c %c %c %c", cState, cValue, nState, nValue, dir);

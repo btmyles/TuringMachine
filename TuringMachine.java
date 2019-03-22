@@ -16,6 +16,7 @@ public class TuringMachine
         char s1, v1, s2, v2, dir;
         Boolean found;
         int count;
+        char[] nOperations;
 
         Scanner in = null;
         try
@@ -38,18 +39,22 @@ public class TuringMachine
         }
         catch(FileNotFoundException e)
         {
+            // Crashes program if the file is not found
             System.out.println("Input file not found");
+            return;
         }
         finally
         {
+            // Close the scanner
             if (in != null)
-            in.close();
+                in.close();
         }
 
         // Process the tape based on the delta rules
         found = false;
         count = 0;
-        // Loop through each rule in delta
+
+        // Loop through each rule in delta to find what the next operations should be
         while (!found && count < delta.size())
         {
             // If the current rule's cState and cValue match up, execute that state.
@@ -58,7 +63,25 @@ public class TuringMachine
                 found = true;
 
                 // Get the new state, value to write, and direction to move from the rule
-                delta.get(count).execute();
+                nOperations = delta.get(count).execute();
+
+                // Use the array of next operations:
+
+                // Change the state
+                cState = nOperations[0];
+
+                // Write to the head location
+                tape[head] = nOperations[1];
+
+                // Move the head left or right
+                if (nOperations[2] == 'L' && head > 0)
+                {
+                    head--;
+                }
+                else if (nOperations[2] == 'R')
+                {
+                    head++;
+                }
             }
             else
             {
@@ -72,10 +95,24 @@ public class TuringMachine
             // Print error message
         }
 
+        // Output tape for testing
+        for (int i=0; i<tape.length; i++)
+        {
+            if (head == i)
+            {
+                System.out.print(cState);
+            }
+
+            System.out.print(tape[i]);
+        }
+        System.out.println();
+
         // Output transition functions for testing
+        /*
         for (int i=0; i<delta.size(); i++)
         {
             System.out.println(delta.get(i));
         }
+        */
     }
 }

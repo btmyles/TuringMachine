@@ -1,4 +1,4 @@
-1101
+0101
 A
 A 1 B x R
-A 0 A x R
+A 0 A x L
