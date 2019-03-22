@@ -8,6 +8,7 @@ public class Transition
     char nValue;
     char dir;
 
+    // Constructor
     public Transition(char cState, char cValue, char nState, char nValue, char dir)
     {
         this.cState = cState;
@@ -15,6 +16,17 @@ public class Transition
         this.nState = nState;
         this.nValue = nValue;
         this.dir = dir;
+    }
+
+    // Getters
+    public char getCState()
+    {
+        return cState;
+    }
+
+    public char getCValue()
+    {
+        return cValue;
     }
 
     public String toString()
