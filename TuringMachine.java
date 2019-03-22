@@ -39,5 +39,11 @@ public class TuringMachine
         }
         if (in != null)
             in.close();
+
+        // Output transition functions for testing
+        for (int i=0; i<delta.size(); i++)
+        {
+            System.out.println(delta.get(i));
+        }
     }
 }
