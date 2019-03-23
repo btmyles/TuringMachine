@@ -1,4 +1,3 @@
-
 // Turing machine main
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -11,10 +10,10 @@ public class TuringMachine
     {
         char[] tape;
         int head = 0;
-        char cState;
+        char cState, acceptState;
         ArrayList<Transition> delta = new ArrayList<Transition>(); 
         char s1, v1, s2, v2, dir;
-        Boolean found;
+        Boolean halt, accept, found;
         int count;
         char[] nOperations;
 
@@ -26,6 +25,7 @@ public class TuringMachine
             // Read the values from the text file
             tape = in.nextLine().toCharArray();
             cState = in.nextLine().charAt(0);
+            acceptState = in.nextLine().charAt(0);
 
             while (in.hasNextLine())
             {
@@ -50,62 +50,81 @@ public class TuringMachine
                 in.close();
         }
 
-        // Process the tape based on the delta rules
-        found = false;
-        count = 0;
+        halt = false;
+        accept = false;
 
-        // Loop through each rule in delta to find what the next operations should be
-        while (!found && count < delta.size())
+        // Loop until the machine decides
+        while (!halt)
         {
-            // If the current rule's cState and cValue match up, execute that state.
-            if (delta.get(count).getCState() == cState && delta.get(count).getCValue() == tape[head])
+            // Process the tape based on the delta rules
+            found = false;
+            count = 0;
+
+            // Loop through each rule in delta to find what the next operations should be
+            while (!found && count < delta.size())
             {
-                found = true;
-
-                // Get the new state, value to write, and direction to move from the rule
-                nOperations = delta.get(count).execute();
-
-                // Use the array of next operations:
-
-                // Change the state
-                cState = nOperations[0];
-
-                // Write to the head location
-                tape[head] = nOperations[1];
-
-                // Move the head left or right
-                if (nOperations[2] == 'L' && head > 0)
+                // If the current rule's cState and cValue match up, execute that state.
+                if (delta.get(count).getCState() == cState && delta.get(count).getCValue() == tape[head])
                 {
-                    head--;
+                    found = true;
+
+                    // Get the new state, value to write, and direction to move from the rule
+                    nOperations = delta.get(count).execute();
+
+                    // Use the array of next operations:
+
+                    // Change the state and check for accept
+                    cState = nOperations[0];
+                    if (cState == acceptState)
+                    {
+                        accept = true;
+                        halt = true;
+                    }
+
+                    // Write to the head location unless the character provided is a ~
+                    if (nOperations[1] != '~')
+                        tape[head] = nOperations[1];
+
+                    // Move the head left or right
+                    if (nOperations[2] == 'L' && head > 0)
+                    {
+                        head--;
+                    }
+                    else if (nOperations[2] == 'R')
+                    {
+                        if (head == tape.length - 1)
+                        {
+                            tape = extendTape(tape);
+                        }
+                        head++;
+                    }
                 }
-                else if (nOperations[2] == 'R')
+                else
                 {
-                    head++;
+                    count++;
                 }
             }
-            else
-            {
-                count++;
-            }
-        }
 
-        // If count exceeds the # of rules in delta, no rule applies to the current state of the machine
-        if (count >= delta.size())
-        {
-            // Print error message
-        }
-
-        // Output tape for testing
-        for (int i=0; i<tape.length; i++)
-        {
-            if (head == i)
+            // If count exceeds the # of rules in delta, no rule applies to the current state of the machine
+            if (count >= delta.size())
             {
-                System.out.print(cState);
+                halt = true;
             }
 
-            System.out.print(tape[i]);
+            // Output tape for testing
+            for (int i=0; i<tape.length; i++)
+            {
+                if (head == i)
+                {
+                    System.out.print(cState);
+                }
+
+                System.out.print(tape[i]);
+            }
+            System.out.println();
         }
-        System.out.println();
+
+        System.out.println((accept) ? "Accept" : "Reject");
 
         // Output transition functions for testing
         /*
@@ -114,5 +133,17 @@ public class TuringMachine
             System.out.println(delta.get(i));
         }
         */
+    }
+
+    private static char[] extendTape(char[] oldTape)
+    {
+        char[] newTape = new char[oldTape.length+1];
+        for (int i=0; i<oldTape.length; i++)
+        {
+            newTape[i] = oldTape[i];
+        }
+        newTape[oldTape.length] = '_';
+
+        return newTape;
     }
 }

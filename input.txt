@@ -1,4 +1,6 @@
-0101
+1001
 A
+C
 A 1 B x R
-A 0 A x L
+B 0 A x L
+A x C ~ L
