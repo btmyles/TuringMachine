@@ -1,4 +1,5 @@
 import javafx.scene.control.Label;
+
 public class Configuration
 {
     Label leftConfig;
