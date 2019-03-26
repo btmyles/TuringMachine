@@ -5,15 +5,14 @@ import java.io.*;
 
 public class TuringMachine
 {
-
+    private static char[] tape;
     public static void main(String[] args)
     {
-        char[] tape;
         int head = 0;
         char cState, acceptState;
         ArrayList<Transition> delta = new ArrayList<Transition>(); 
         char s1, v1, s2, v2, dir;
-        Boolean halt, accept, found;
+        Boolean halt, accept, ruleFound;
         int count;
         char[] nOperations;
 
@@ -57,16 +56,16 @@ public class TuringMachine
         while (!halt)
         {
             // Process the tape based on the delta rules
-            found = false;
+            ruleFound = false;
             count = 0;
 
             // Loop through each rule in delta to find what the next operations should be
-            while (!found && count < delta.size())
+            while (!ruleFound && count < delta.size())
             {
                 // If the current rule's cState and cValue match up, execute that state.
                 if (delta.get(count).getCState() == cState && delta.get(count).getCValue() == tape[head])
                 {
-                    found = true;
+                    ruleFound = true;
 
                     // Get the new state, value to write, and direction to move from the rule
                     nOperations = delta.get(count).execute();
@@ -86,6 +85,7 @@ public class TuringMachine
                         tape[head] = nOperations[1];
 
                     // Move the head left or right
+                    // Dont move left if the head is at the left end
                     if (nOperations[2] == 'L' && head > 0)
                     {
                         head--;
