@@ -10,7 +10,7 @@ public class TuringMachine
     {
         int head = 0;
         char cState, acceptState;
-        ArrayList<Transition> delta = new ArrayList<Transition>(); 
+        ArrayList<Transition1> delta = new ArrayList<Transition1>(); 
         char s1, v1, s2, v2, dir;
         Boolean halt, accept, ruleFound;
         int count;
@@ -33,7 +33,7 @@ public class TuringMachine
                 s2 = in.next().charAt(0);
                 v2 = in.next().charAt(0);
                 dir = in.next().charAt(0);
-                delta.add(new Transition(s1, v1, s2, v2, dir));
+                delta.add(new Transition1(s1, v1, s2, v2, dir));
             }
         }
         catch(FileNotFoundException e)

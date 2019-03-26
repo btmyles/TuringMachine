@@ -19,6 +19,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ScrollPane;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -27,6 +28,8 @@ public class TuringGUI extends Application
     String tape;
     char cState;
     char acceptState;
+    String s1, v1, s2, v2, dir;
+    ArrayList<Transition> delta = new ArrayList<Transition>(); 
 
     Configuration currentConfig;
     // Label leftConfig;
@@ -40,9 +43,21 @@ public class TuringGUI extends Application
     {
         // Read the values from the text file
         Scanner in = new Scanner(new File("testCase.txt"));
+
         tape = in.nextLine();
         cState = in.nextLine().charAt(0);
         acceptState = in.nextLine().charAt(0);
+
+        while (in.hasNextLine())
+            {
+                s1 = in.next();
+                v1 = in.next();
+                s2 = in.next();
+                v2 = in.next();
+                dir = in.next();
+                delta.add(new Transition(s1, v1, s2, v2, dir));
+            }
+
         in.close();
 
         Label input = new Label(String.format("Input: %s \nStart State: %c \nAccept State: %c", tape, cState, acceptState));

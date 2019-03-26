@@ -2,14 +2,14 @@ public class Transition
 {
     // c = Current 
     // n = Next 
-    char cState;
-    char cValue;
-    char nState;
-    char nValue;
-    char dir;
+    String cState;
+    String cValue;
+    String nState;
+    String nValue;
+    String dir;
 
     // Constructor
-    public Transition(char cState, char cValue, char nState, char nValue, char dir)
+    public Transition(String cState, String cValue, String nState, String nValue, String dir)
     {
         this.cState = cState;
         this.cValue = cValue;
@@ -19,24 +19,24 @@ public class Transition
     }
 
     // Getters
-    public char getCState()
+    public String getCState()
     {
         return cState;
     }
 
-    public char getCValue()
+    public String getCValue()
     {
         return cValue;
     }
 
     // Returns an array of the operations to be completed.
-    public char[] execute()
+    public String execute()
     {
-        return new char[] {nState, nValue, dir};
+        return nState + nValue + dir;
     }
 
     public String toString()
     {
-        return String.format("%c %c %c %c %c", cState, cValue, nState, nValue, dir);
+        return String.format("%s %s %s %s %s", cState, cValue, nState, nValue, dir);
     }
 }
