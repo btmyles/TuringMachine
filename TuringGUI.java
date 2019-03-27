@@ -30,6 +30,7 @@ public class TuringGUI extends Application
     int head = 0;
     ArrayList<Transition> delta = new ArrayList<Transition>(); 
 
+    // Arraylist of past configs may not be working out
     ArrayList<Configuration> pastConfigurations = new ArrayList<Configuration>(); 
 
     int configShowing = 0;
@@ -224,6 +225,7 @@ public class TuringGUI extends Application
     }
     public void processPrev(ActionEvent event)
     {
+        // This line is producing an array with empty labels
         Label[] newLabels = pastConfigurations.get(configShowing-1).getConfig();
         System.out.println(newLabels[2].getText());
         configShowing--;
@@ -237,10 +239,7 @@ public class TuringGUI extends Application
         labels[0].setText(newLabels[0].getText());
         labels[1].setText("A");
         labels[2].setText(currentConfig.getConfig()[2].getText());
-
-
-        
-        
+   
     }
 
     private static String extendTape(String oldTape)
