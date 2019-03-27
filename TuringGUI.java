@@ -41,9 +41,7 @@ public class TuringGUI extends Application
 
 
     Configuration currentConfig;
-    // Label leftConfig;
-    // Label midConfig;
-    // Label rightConfig;
+    Label message;
 
     Button next;
     Button prev;
@@ -70,15 +68,12 @@ public class TuringGUI extends Application
 
         Label input = new Label(String.format("Input: %s \nStart State: %c \nAccept State: %c", tape, cState, acceptState));
 
+        message = new Label("");
+        message.setStyle("-fx-font-size: 40px;");
         // Create configuration object
         currentConfig = new Configuration("", tape.substring(0,1), tape.substring(1));
         currentConfig.changeStyle("-fx-font-size: 45px;");
         currentConfig.changeHeadStyle("-fx-background-color: #66e293");
-
-        // leftConfig = new Label();
-        // midConfig = new Label(tape.substring(0,1));
-        // midConfig.setStyle("-fx-background-color: #66e293");
-        // rightConfig = new Label(tape.substring(1));
 
         // Put configuration in a flowpane
         labels = currentConfig.getConfig();
@@ -117,6 +112,7 @@ public class TuringGUI extends Application
         mainGrid.add(spacer, 0, 1);
         mainGrid.add(config, 0, 2);
         mainGrid.add(buttons, 0, 3);
+        mainGrid.add(message, 1, 2);
 
         Scene mainScene = new Scene(mainGrid, 600, 400);
         primaryStage.setTitle("Turing Machine");
@@ -153,7 +149,9 @@ public class TuringGUI extends Application
                     {
                         accept = true;
                         halt = true;
+                        message.setText("Accepted!");
                     }
+                    
 
                     // Write to the head location unless the character provided is a ~
                     if (nOperations.charAt(1) != '~')
@@ -205,27 +203,8 @@ public class TuringGUI extends Application
             if (count >= delta.size())
             {
                 halt = true;
+                message.setText("Rejected!");
             }
-
-            
-
-            /*
-            // Output tape for testing
-            for (int i=0; i<tape.length(); i++)
-            {
-                if (i < head)
-                {
-                    currentConfig.addLeftVariable(tape.substring(0, head-1));
-                }
-                if (head == i)
-                {
-                    System.out.print(cState);
-                }
-
-                System.out.print(tape.charAt(i));
-            }
-            */
-            //System.out.println();
         }
     }
     public void processPrev(ActionEvent event)
