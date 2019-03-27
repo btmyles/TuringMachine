@@ -29,6 +29,11 @@ public class TuringGUI extends Application
 
     int head = 0;
     ArrayList<Transition> delta = new ArrayList<Transition>(); 
+
+    ArrayList<Configuration> pastConfigurations = new ArrayList<Configuration>(); 
+
+    int configShowing = 0;
+
     String s1, v1, s2, v2, dir;
     Boolean halt = false, accept, ruleFound;
     int count;
@@ -38,7 +43,6 @@ public class TuringGUI extends Application
     char cState;
     char acceptState;
     Label[] labels;
-
 
     Configuration currentConfig;
     Label message;
@@ -72,11 +76,14 @@ public class TuringGUI extends Application
         message.setStyle("-fx-font-size: 40px;");
         // Create configuration object
         currentConfig = new Configuration("", tape.substring(0,1), tape.substring(1));
+
         currentConfig.changeStyle("-fx-font-size: 45px;");
         currentConfig.changeHeadStyle("-fx-background-color: #66e293");
 
         // Put configuration in a flowpane
         labels = currentConfig.getConfig();
+        pastConfigurations.add(currentConfig);
+
         FlowPane config = new FlowPane(labels[0], labels[1], labels[2]);
 
         // a spacer to separate config from other inputs
@@ -122,9 +129,14 @@ public class TuringGUI extends Application
 
     public void processNext(ActionEvent event)
     {
+        if (configShowing < pastConfigurations.size()-1)
+        {
+            currentConfig = pastConfigurations.get(configShowing);
+            configShowing++;
+        }
 
         // Loop until the machine decides
-        if (!halt)
+        else if (!halt)
         {
             // Process the tape based on the delta rules
             ruleFound = false;
@@ -177,8 +189,8 @@ public class TuringGUI extends Application
                         head++;
                     }
                     // updating the configuration string
+
                     currentConfig.clear();
-                    labels = currentConfig.getConfig();
 
                     if (head != 0)
                     {
@@ -191,6 +203,9 @@ public class TuringGUI extends Application
                     }
                     currentConfig.addRightVariable(tape.substring(head+1));
                     labels = currentConfig.getConfig();
+
+                    pastConfigurations.add(currentConfig);
+                    configShowing++;
 
                 }
                 else
@@ -209,6 +224,22 @@ public class TuringGUI extends Application
     }
     public void processPrev(ActionEvent event)
     {
+        Label[] newLabels = pastConfigurations.get(configShowing-1).getConfig();
+        System.out.println(newLabels[2].getText());
+        configShowing--;
+
+        currentConfig.clear();
+
+        currentConfig.addLeftVariable(newLabels[0].getText());
+        currentConfig.addMidVariable(newLabels[1].getText());
+        currentConfig.addRightVariable(newLabels[2].getText());
+        labels = currentConfig.getConfig();
+        labels[0].setText(newLabels[0].getText());
+        labels[1].setText("A");
+        labels[2].setText(currentConfig.getConfig()[2].getText());
+
+
+        
         
     }
 

@@ -44,6 +44,21 @@ public class Configuration
         rightConfig.setText(rightConfig.getText() + tape);
     }
 
+    public Label getLeftConfig()
+    {
+        return leftConfig;
+    }
+
+    public Label getMidConfig()
+    {
+        return midConfig;
+    }
+
+    public Label getRightConfig()
+    {
+        return rightConfig;
+    }
+
     public void clear()
     {
         leftConfig.setText("");
