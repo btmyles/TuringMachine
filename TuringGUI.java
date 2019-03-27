@@ -30,15 +30,15 @@ public class TuringGUI extends Application
     int head = 0;
     ArrayList<Transition> delta = new ArrayList<Transition>(); 
     String s1, v1, s2, v2, dir;
-    Boolean halt, accept, ruleFound;
+    Boolean halt = false, accept, ruleFound;
     int count;
-    char[] nOperations;
+    String nOperations;
 
     String tape;
     char cState;
     char acceptState;
-    String s1, v1, s2, v2, dir;
-    ArrayList<Transition> delta = new ArrayList<Transition>(); 
+    Label[] labels;
+
 
     Configuration currentConfig;
     // Label leftConfig;
@@ -52,11 +52,11 @@ public class TuringGUI extends Application
     {
         // Read the values from the text file
         Scanner in = new Scanner(new File("testCase.txt"));
-
+        
         tape = in.nextLine();
         cState = in.nextLine().charAt(0);
         acceptState = in.nextLine().charAt(0);
-        
+
         while (in.hasNextLine())
             {
                 s1 = in.next();
@@ -81,7 +81,7 @@ public class TuringGUI extends Application
         // rightConfig = new Label(tape.substring(1));
 
         // Put configuration in a flowpane
-        Label[] labels = currentConfig.getConfig();
+        labels = currentConfig.getConfig();
         FlowPane config = new FlowPane(labels[0], labels[1], labels[2]);
 
         // a spacer to separate config from other inputs
@@ -126,6 +126,7 @@ public class TuringGUI extends Application
 
     public void processNext(ActionEvent event)
     {
+
         // Loop until the machine decides
         if (!halt)
         {
@@ -137,7 +138,7 @@ public class TuringGUI extends Application
             while (!ruleFound && count < delta.size())
             {
                 // If the current rule's cState and cValue match up, execute that state.
-                if (delta.get(count).getCState() == cState && delta.get(count).getCValue() == tape.charAt(head))
+                if (delta.get(count).getCState().equals(Character.toString(cState)) && delta.get(count).getCValue().equals(tape.substring(head, head+1)))
                 {
                     ruleFound = true;
 
@@ -147,7 +148,7 @@ public class TuringGUI extends Application
                     // Use the array of next operations:
 
                     // Change the state and check for accept
-                    cState = nOperations[0];
+                    cState = nOperations.charAt(0);
                     if (cState == acceptState)
                     {
                         accept = true;
@@ -155,20 +156,21 @@ public class TuringGUI extends Application
                     }
 
                     // Write to the head location unless the character provided is a ~
-                    if (nOperations[1] != '~')
+                    if (nOperations.charAt(1) != '~')
                     {
                         StringBuilder modifiedTape = new StringBuilder(tape);
-                        modifiedTape.setCharAt(head, nOperations[1]);
+                        modifiedTape.setCharAt(head, nOperations.charAt(1));
                         tape = modifiedTape.toString();
                     }
 
                     // Move the head left or right
                     // Dont move left if the head is at the left end
-                    if (nOperations[2] == 'L' && head > 0)
+                    if (nOperations.charAt(2) == 'L' && head > 0)
                     {
                         head--;
                     }
-                    else if (nOperations[2] == 'R')
+
+                    else if (nOperations.charAt(2) == 'R')
                     {
                         if (head == tape.length() - 1)
                         {
@@ -176,6 +178,22 @@ public class TuringGUI extends Application
                         }
                         head++;
                     }
+                    // updating the configuration string
+                    currentConfig.clear();
+                    labels = currentConfig.getConfig();
+
+                    if (head != 0)
+                    {
+                        currentConfig.addLeftVariable(tape.substring(0, head));
+                        currentConfig.addMidVariable(tape.substring(head, head+1));
+                    }
+                    else
+                    {
+                        currentConfig.addMidVariable(tape.substring(0, 1));
+                    }
+                    currentConfig.addRightVariable(tape.substring(head+1));
+                    labels = currentConfig.getConfig();
+
                 }
                 else
                 {
@@ -189,9 +207,16 @@ public class TuringGUI extends Application
                 halt = true;
             }
 
+            
+
+            /*
             // Output tape for testing
             for (int i=0; i<tape.length(); i++)
             {
+                if (i < head)
+                {
+                    currentConfig.addLeftVariable(tape.substring(0, head-1));
+                }
                 if (head == i)
                 {
                     System.out.print(cState);
@@ -199,7 +224,8 @@ public class TuringGUI extends Application
 
                 System.out.print(tape.charAt(i));
             }
-            System.out.println();
+            */
+            //System.out.println();
         }
     }
     public void processPrev(ActionEvent event)

@@ -29,6 +29,28 @@ public class Configuration
         midConfig.setStyle(midFormat);
     }
 
+    public void addLeftVariable(String tape)
+    {
+        leftConfig.setText(leftConfig.getText() + tape);
+    }
+
+    public void addMidVariable(String tape)
+    {
+        midConfig.setText(tape);
+    }   
+
+    public void addRightVariable(String tape)
+    {
+        rightConfig.setText(rightConfig.getText() + tape);
+    }
+
+    public void clear()
+    {
+        leftConfig.setText("");
+        midConfig.setText("");
+        rightConfig.setText("");
+    }
+
     public Label[] getConfig()
     {
         return new Label[] {leftConfig, midConfig, rightConfig};
