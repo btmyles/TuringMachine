@@ -31,7 +31,7 @@ public class TuringGUI extends Application
     ArrayList<Transition> delta = new ArrayList<Transition>(); 
     String s1, v1, s2, v2, dir;
     Boolean halt = false, accept, ruleFound;
-    int count;
+    int count, configShowing;
     String nOperations;
 
     String tape;
@@ -41,9 +41,7 @@ public class TuringGUI extends Application
 
 
     Configuration currentConfig;
-    // Label leftConfig;
-    // Label midConfig;
-    // Label rightConfig;
+    ArrayList<Configuration> pastConfigs;
 
     Button next;
     Button prev;
@@ -71,14 +69,19 @@ public class TuringGUI extends Application
         Label input = new Label(String.format("Input: %s \nStart State: %c \nAccept State: %c", tape, cState, acceptState));
 
         // Create configuration object
-        currentConfig = new Configuration("", tape.substring(0,1), tape.substring(1));
+        currentConfig = new Configuration("", tape.substring(0,1), tape.substring(1), 0);
         currentConfig.changeStyle("-fx-font-size: 45px;");
         currentConfig.changeHeadStyle("-fx-background-color: #66e293");
 
-        // leftConfig = new Label();
-        // midConfig = new Label(tape.substring(0,1));
-        // midConfig.setStyle("-fx-background-color: #66e293");
-        // rightConfig = new Label(tape.substring(1));
+        // Add config to the pastConfig list
+        pastConfigs = new ArrayList<Configuration>();
+        Configuration copy = new Configuration(currentConfig.getLeftConfig().getText(), currentConfig.getMidConfig().getText(), currentConfig.getRightConfig().getText(), currentConfig.getConfigNumber());
+        pastConfigs.add(copy);
+        
+        // Print current and copy for testing
+        System.out.printf("%d config: \n", configShowing);
+        System.out.println("\n" + currentConfig);
+        //
 
         // Put configuration in a flowpane
         labels = currentConfig.getConfig();
@@ -126,9 +129,12 @@ public class TuringGUI extends Application
 
     public void processNext(ActionEvent event)
     {
-
+        if (configShowing != pastConfigs.size()-1)
+        {
+            // Show the configuration snapshot of the config which is ahead of the current
+        }
         // Loop until the machine decides
-        if (!halt)
+        else if (!halt)
         {
             // Process the tape based on the delta rules
             ruleFound = false;
@@ -179,9 +185,9 @@ public class TuringGUI extends Application
                         head++;
                     }
                     // updating the configuration string
-                    currentConfig.clear();
-                    labels = currentConfig.getConfig();
 
+                    currentConfig.clear();
+                                        
                     if (head != 0)
                     {
                         currentConfig.addLeftVariable(tape.substring(0, head));
@@ -192,7 +198,19 @@ public class TuringGUI extends Application
                         currentConfig.addMidVariable(tape.substring(0, 1));
                     }
                     currentConfig.addRightVariable(tape.substring(head+1));
-                    labels = currentConfig.getConfig();
+                    
+                    // Add currentConfig to pastConfigs
+                    currentConfig.setConfigNumber(currentConfig.getConfigNumber() + 1);
+                    Configuration copy = new Configuration(currentConfig.getLeftConfig().getText(), currentConfig.getMidConfig().getText(), currentConfig.getRightConfig().getText(), currentConfig.getConfigNumber());
+                    pastConfigs.add(copy);
+                    configShowing++;
+
+                    // Print entire list of configurations
+                    System.out.println("\nList of past configs including current:");
+                    for (int i=0; i<pastConfigs.size(); i++)
+                    {
+                        System.out.println(pastConfigs.get(i));
+                    }
 
                 }
                 else
@@ -206,31 +224,22 @@ public class TuringGUI extends Application
             {
                 halt = true;
             }
-
-            
-
-            /*
-            // Output tape for testing
-            for (int i=0; i<tape.length(); i++)
-            {
-                if (i < head)
-                {
-                    currentConfig.addLeftVariable(tape.substring(0, head-1));
-                }
-                if (head == i)
-                {
-                    System.out.print(cState);
-                }
-
-                System.out.print(tape.charAt(i));
-            }
-            */
-            //System.out.println();
         }
     }
     public void processPrev(ActionEvent event)
     {
-        
+        // Show a snapshot of the config before currentConfig
+        configShowing--;
+        Configuration newCon = pastConfigs.get(configShowing);
+        currentConfig.clear();
+        currentConfig.addLeftVariable(newCon.getLeftConfig().getText());
+        currentConfig.addMidVariable(newCon.getMidConfig().getText());
+        currentConfig.addRightVariable(newCon.getRightConfig().getText());
+
+        // Print current for testing
+        System.out.printf("\n%d config: \n", configShowing);
+        System.out.println(currentConfig);
+        //
     }
 
     private static String extendTape(String oldTape)
