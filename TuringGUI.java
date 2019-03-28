@@ -1,27 +1,16 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.FileChooser;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.event.ActionEvent;
-import javafx.scene.text.Font;
 import javafx.event.EventHandler;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ScrollPane;
-import java.util.ArrayList;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Scanner;
 
 public class TuringGUI extends Application
@@ -45,6 +34,10 @@ public class TuringGUI extends Application
 
     Button next;
     Button prev;
+    Label haltMessage;
+    Label inputLabel;
+    Label input;
+    Label configLabel;
 
     public void start(Stage primaryStage) throws Exception
     {
@@ -66,7 +59,10 @@ public class TuringGUI extends Application
             }
         in.close();
 
-        Label input = new Label(String.format("Input: %s \nStart State: %c \nAccept State: %c", tape, cState, acceptState));
+        inputLabel = new Label("Input: ");
+        inputLabel.setStyle("-fx-font-size: 45px;");
+        Label input = new Label(String.format(tape));
+        input.setStyle("-fx-font-size: 45px;");
 
         // Create configuration object
         currentConfig = new Configuration("", tape.substring(0,1), tape.substring(1), 0);
@@ -77,11 +73,6 @@ public class TuringGUI extends Application
         pastConfigs = new ArrayList<Configuration>();
         Configuration copy = new Configuration(currentConfig.getLeftConfig().getText(), currentConfig.getMidConfig().getText(), currentConfig.getRightConfig().getText(), currentConfig.getConfigNumber());
         pastConfigs.add(copy);
-        
-        // Print current and copy for testing
-        System.out.printf("%d config: \n", configShowing);
-        System.out.println("\n" + currentConfig);
-        //
 
         // Put configuration in a flowpane
         labels = currentConfig.getConfig();
@@ -91,12 +82,19 @@ public class TuringGUI extends Application
         Region spacer = new Region();
         spacer.setPrefHeight(40);
 
+        // Create label to declare config location
+        configLabel = new Label("Config: ");
+        configLabel.setStyle("-fx-font-size: 45px;");
+
         // Create buttons for next and previous configs
         next = new Button("Next");
         prev = new Button("Prev");
         next.setStyle("-fx-font-size: 25px;");
         prev.setStyle("-fx-font-size: 25px;");
         FlowPane buttons = new FlowPane(next, prev);
+
+        haltMessage = new Label("");
+        haltMessage.setStyle("-fx-font-size: 35px;");
 
         // When buttons are clicked:
         next.setOnAction(new EventHandler<ActionEvent>() 
@@ -116,10 +114,13 @@ public class TuringGUI extends Application
 
         // Place elements in the outer gridpane
         GridPane mainGrid = new GridPane();
-        mainGrid.add(input, 0, 0);
-        mainGrid.add(spacer, 0, 1);
-        mainGrid.add(config, 0, 2);
-        mainGrid.add(buttons, 0, 3);
+        mainGrid.add(inputLabel, 0, 0);
+        mainGrid.add(input, 0, 1);
+        mainGrid.add(spacer, 0, 2);
+        mainGrid.add(configLabel, 0, 3);
+        mainGrid.add(config, 0, 4);
+        mainGrid.add(haltMessage, 1, 5);
+        mainGrid.add(buttons, 0, 5);
 
         Scene mainScene = new Scene(mainGrid, 600, 400);
         primaryStage.setTitle("Turing Machine");
@@ -129,9 +130,16 @@ public class TuringGUI extends Application
 
     public void processNext(ActionEvent event)
     {
-        if (configShowing != pastConfigs.size()-1)
+        if (configShowing != pastConfigs.size()-1 && !halt)
         {
             // Show the configuration snapshot of the config which is ahead of the current
+            // Show a snapshot of the config after currentConfig
+            configShowing++;
+            Configuration newCon = pastConfigs.get(configShowing);
+            currentConfig.clear();
+            currentConfig.addLeftVariable(newCon.getLeftConfig().getText());
+            currentConfig.addMidVariable(newCon.getMidConfig().getText());
+            currentConfig.addRightVariable(newCon.getRightConfig().getText());
         }
         // Loop until the machine decides
         else if (!halt)
@@ -159,6 +167,7 @@ public class TuringGUI extends Application
                     {
                         accept = true;
                         halt = true;
+                        haltMessage.setText("Accept");
                     }
 
                     // Write to the head location unless the character provided is a ~
@@ -223,23 +232,30 @@ public class TuringGUI extends Application
             if (count >= delta.size())
             {
                 halt = true;
+                haltMessage.setText("Reject");
             }
         }
     }
     public void processPrev(ActionEvent event)
     {
-        // Show a snapshot of the config before currentConfig
-        configShowing--;
-        Configuration newCon = pastConfigs.get(configShowing);
-        currentConfig.clear();
-        currentConfig.addLeftVariable(newCon.getLeftConfig().getText());
-        currentConfig.addMidVariable(newCon.getMidConfig().getText());
-        currentConfig.addRightVariable(newCon.getRightConfig().getText());
+        if (configShowing > 0)
+        {
+            halt = false;
+            //haltMessage.setText("");
 
-        // Print current for testing
-        System.out.printf("\n%d config: \n", configShowing);
-        System.out.println(currentConfig);
-        //
+            // Show a snapshot of the config before currentConfig
+            configShowing--;
+            Configuration newCon = pastConfigs.get(configShowing);
+            currentConfig.clear();
+            currentConfig.addLeftVariable(newCon.getLeftConfig().getText());
+            currentConfig.addMidVariable(newCon.getMidConfig().getText());
+            currentConfig.addRightVariable(newCon.getRightConfig().getText());
+
+            // Print current for testing
+            System.out.printf("\n%d config: \n", configShowing);
+            System.out.println(currentConfig);
+            //
+        }
     }
 
     private static String extendTape(String oldTape)
