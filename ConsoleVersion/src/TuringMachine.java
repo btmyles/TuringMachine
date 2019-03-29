@@ -26,6 +26,23 @@ public class TuringMachine
             cState = in.nextLine().charAt(0);
             acceptState = in.nextLine().charAt(0);
 
+            // Print initial tape, current initial state, accept state.
+            System.out.print("Input: ");
+            // Output tape
+            for (int i=0; i<tape.length; i++)
+            {
+                if (head == i)
+                {
+                    System.out.print(cState);
+                }
+
+                System.out.print(tape[i]);
+            }
+            System.out.println();
+
+            System.out.println("Initial State: " + cState);
+            System.out.println("Accept State: " + acceptState);
+            
             while (in.hasNextLine())
             {
                 s1 = in.next().charAt(0);
@@ -111,7 +128,7 @@ public class TuringMachine
                 halt = true;
             }
 
-            // Output tape for testing
+            // Output tape
             for (int i=0; i<tape.length; i++)
             {
                 if (head == i)
@@ -125,14 +142,6 @@ public class TuringMachine
         }
 
         System.out.println((accept) ? "Accept" : "Reject");
-
-        // Output transition functions for testing
-        /*
-        for (int i=0; i<delta.size(); i++)
-        {
-            System.out.println(delta.get(i));
-        }
-        */
     }
 
     private static char[] extendTape(char[] oldTape)
