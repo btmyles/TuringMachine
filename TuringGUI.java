@@ -17,51 +17,53 @@ public class TuringGUI extends Application
 {
 
     int head = 0;
+    String tape;
+
     ArrayList<Transition> delta = new ArrayList<Transition>(); 
     String s1, v1, s2, v2, dir;
+
     Boolean halt = false, accept, ruleFound;
-    int count, configShowing;
+    int count;
     String nOperations;
 
-    String tape;
     char cState;
     char acceptState;
     Label[] labels;
 
-
+    Label configLabel;
     Configuration currentConfig;
     ArrayList<Configuration> pastConfigs;
+    int configShowing;
 
-    Button next;
-    Button prev;
+    Button next, prev;
     Label haltMessage;
-    Label inputLabel;
-    Label input;
-    Label configLabel;
+    Label inputLabel, input;
 
     public void start(Stage primaryStage) throws Exception
     {
-        // Read the values from the text file
+        // Read the values from the input file
         Scanner in = new Scanner(new File("testCase.txt"));
         
         tape = in.nextLine();
         cState = in.nextLine().charAt(0);
         acceptState = in.nextLine().charAt(0);
 
+        // Scan transitions from input file
         while (in.hasNextLine())
-            {
-                s1 = in.next();
-                v1 = in.next();
-                s2 = in.next();
-                v2 = in.next();
-                dir = in.next();
-                delta.add(new Transition(s1, v1, s2, v2, dir));
-            }
+        {
+            s1 = in.next();
+            v1 = in.next();
+            s2 = in.next();
+            v2 = in.next();
+            dir = in.next();
+            delta.add(new Transition(s1, v1, s2, v2, dir));
+        }
         in.close();
 
+        // Display initial configuration info
         inputLabel = new Label("Input: ");
         inputLabel.setStyle("-fx-font-size: 45px;");
-        Label input = new Label(String.format(tape));
+        input = new Label(String.format(tape));
         input.setStyle("-fx-font-size: 45px;");
 
         // Create configuration object
@@ -69,20 +71,22 @@ public class TuringGUI extends Application
         currentConfig.changeStyle("-fx-font-size: 45px;");
         currentConfig.changeHeadStyle("-fx-background-color: #66e293");
 
+        // Get labels from currentConfig
+        labels = currentConfig.getConfig();
+
         // Add config to the pastConfig list
         pastConfigs = new ArrayList<Configuration>();
-        Configuration copy = new Configuration(currentConfig.getLeftConfig().getText(), currentConfig.getMidConfig().getText(), currentConfig.getRightConfig().getText(), currentConfig.getConfigNumber());
+        Configuration copy = new Configuration(labels[0].getText(), labels[1].getText(), labels[2].getText(), currentConfig.getConfigNumber());
         pastConfigs.add(copy);
 
         // Put configuration in a flowpane
-        labels = currentConfig.getConfig();
         FlowPane config = new FlowPane(labels[0], labels[1], labels[2]);
 
-        // a spacer to separate config from other inputs
+        // Spacer to separate config from other inputs
         Region spacer = new Region();
         spacer.setPrefHeight(40);
 
-        // Create label to declare config location
+        // Create label to show where current configuration will be displayed
         configLabel = new Label("Config: ");
         configLabel.setStyle("-fx-font-size: 45px;");
 
@@ -93,10 +97,11 @@ public class TuringGUI extends Application
         prev.setStyle("-fx-font-size: 25px;");
         FlowPane buttons = new FlowPane(next, prev);
 
+        // Create haltMessage text. Set to empty string since machine is not halted yet
         haltMessage = new Label("");
         haltMessage.setStyle("-fx-font-size: 35px;");
 
-        // When buttons are clicked:
+        // When buttons are clicked, run their process method
         next.setOnAction(new EventHandler<ActionEvent>() 
         {
             public void handle(ActionEvent e) 
@@ -122,6 +127,7 @@ public class TuringGUI extends Application
         mainGrid.add(haltMessage, 1, 5);
         mainGrid.add(buttons, 0, 5);
 
+        // Show the window
         Scene mainScene = new Scene(mainGrid, 600, 400);
         primaryStage.setTitle("Turing Machine");
         primaryStage.setScene(mainScene);
@@ -141,7 +147,7 @@ public class TuringGUI extends Application
             currentConfig.addMidVariable(newCon.getMidConfig().getText());
             currentConfig.addRightVariable(newCon.getRightConfig().getText());
         }
-        // Loop until the machine decides
+        // find the applicable rule, execute it, and determine if the machine should halt
         else if (!halt)
         {
             // Process the tape based on the delta rules
