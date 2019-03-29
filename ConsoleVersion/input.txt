@@ -1,6 +1,25 @@
-1001
+01#01
 A
-C
-A 1 B x R
-B 0 A x L
-A x C ~ L
+I
+A 0 B x R
+A 1 C x R
+B 0 B ~ R
+B 1 B ~ R
+B # D ~ R
+C 0 C ~ R
+C 1 C ~ R
+C # E ~ R
+D x D ~ R
+D 0 F x L
+E x E ~ R
+E 1 F x L
+F 0 F ~ L
+F 1 F ~ L
+F x F ~ L
+F # G ~ L
+G 0 G ~ L
+G 1 G ~ L
+G x A ~ R
+A # H ~ R
+H x H ~ R
+H _ I ~ R
