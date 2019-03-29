@@ -41,6 +41,10 @@ public class Configuration
         return rightConfig;
     }
 
+    public void incrementConfigNumber()
+    {
+        configNumber++;
+    }
 
     public void changeStyle(String style)
     {
@@ -56,17 +60,17 @@ public class Configuration
         midConfig.setStyle(midFormat);
     }
 
-    public void addLeftVariable(String tape)
+    public void appendLeft(String tape)
     {
         leftConfig.setText(leftConfig.getText() + tape);
     }
 
-    public void addMidVariable(String tape)
+    public void appendMid(String tape)
     {
         midConfig.setText(tape);
     }   
 
-    public void addRightVariable(String tape)
+    public void appendRight(String tape)
     {
         rightConfig.setText(rightConfig.getText() + tape);
     }

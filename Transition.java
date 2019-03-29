@@ -29,7 +29,7 @@ public class Transition
         return cValue;
     }
 
-    // Returns an array of the operations to be completed.
+    // Returns a string of the operations to be completed.
     public String execute()
     {
         return nState + nValue + dir;
