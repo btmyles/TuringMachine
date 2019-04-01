@@ -69,7 +69,7 @@ public class TuringGUI extends Application
         // Create configuration object
         currentConfig = new Configuration("", tape.substring(0,1), tape.substring(1), 0);
         currentConfig.changeStyle("-fx-font-size: 45px;");
-        currentConfig.changeHeadStyle("-fx-background-color: #66e293");
+        currentConfig.changeHeadStyle("-fx-background-color: #ffe100;");
 
         // Get labels from currentConfig
         labels = currentConfig.getConfig();
@@ -175,6 +175,9 @@ public class TuringGUI extends Application
                         accept = true;
                         halt = true;
                         haltMessage.setText("Accept");
+                        haltMessage.setStyle("-fx-background-color: #4ff958");
+                        currentConfig.changeHeadStyle("-fx-background-color: #4ff958;");
+
                     }
 
                     // Write to the head location unless the character provided is a ~
@@ -238,6 +241,8 @@ public class TuringGUI extends Application
             {
                 halt = true;
                 haltMessage.setText("Reject");
+                haltMessage.setStyle("-fx-background-color: #ff5744");
+                currentConfig.changeHeadStyle("-fx-background-color: #ff5744;");
             }
         }
     }
