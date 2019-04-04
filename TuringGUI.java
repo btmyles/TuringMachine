@@ -15,7 +15,6 @@ import java.util.Scanner;
 
 public class TuringGUI extends Application
 {
-
     int head = 0;
     String tape;
 
@@ -139,7 +138,6 @@ public class TuringGUI extends Application
         // If the next configuration has already been calculated and stored on pastConfigs
         if (configShowing != pastConfigs.size()-1 && !halt)
         {
-            // Show the configuration snapshot of the config which is ahead of the current
             // Show a snapshot of the config after currentConfig
             configShowing++;
             Configuration nextConfig = pastConfigs.get(configShowing);
@@ -166,8 +164,6 @@ public class TuringGUI extends Application
                     // Get the new state, value to write, and direction to move from the rule
                     nextRule = delta.get(count).execute();
 
-                    // Use the array of next operations:
-
                     // Change the state and check for accept
                     cState = nextRule.charAt(0);
                     if (cState == acceptState)
@@ -177,7 +173,6 @@ public class TuringGUI extends Application
                         haltMessage.setText("Accept");
                         haltMessage.setStyle("-fx-background-color: #4ff958");
                         currentConfig.changeHeadStyle("-fx-background-color: #4ff958;");
-
                     }
 
                     // Write to the head location unless the character provided is a ~
@@ -205,11 +200,10 @@ public class TuringGUI extends Application
                         head++;
                     }
 
-                    // updating the configuration showing
-
+                    // Update the configuration showing
                     currentConfig.clear();
                                       
-                    // If the head is at the left side, set the midLabel to the left character of the tape
+                    // If the head is at the left side, set the midLabel (head) to the left character of the tape
                     if (head == 0)
                     {
                         currentConfig.appendMid(tape.substring(0, 1));                
@@ -231,7 +225,6 @@ public class TuringGUI extends Application
                 else
                 {
                     // Increment count since the rule was not found.
-                    // If cound exceeds the number of rules, the input is invalid
                     count++;
                 }
             }
@@ -255,16 +248,11 @@ public class TuringGUI extends Application
             // Show a snapshot of the config before currentConfig
             configShowing--;
             labels = pastConfigs.get(configShowing).getConfig();
-            setCurrentConfig(labels);
+            currentConfig.clear();
+            currentConfig.appendLeft(labels[0].getText());
+            currentConfig.appendMid(labels[1].getText());
+            currentConfig.appendRight(labels[2].getText());
         }
-    }
-
-    private void setCurrentConfig(Label[] labels)
-    {
-        currentConfig.clear();
-        currentConfig.appendLeft(labels[0].getText());
-        currentConfig.appendMid(labels[1].getText());
-        currentConfig.appendRight(labels[2].getText());
     }
 
     private static String extendTape(String oldTape)
